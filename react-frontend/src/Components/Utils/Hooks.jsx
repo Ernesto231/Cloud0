@@ -1,17 +1,17 @@
-import axios from "axios";
-import {useContext, useState} from "react";
-import {ModalContext, SemesterContext} from "../../App";
-import AuthenticationService from "../../Services/AuthenticationService";
+import axios from "axios"
+import {useContext, useState} from "react"
+import {ModalContext, SemesterContext} from "../../App"
+import AuthenticationService from "../../Services/AuthenticationService"
 
 export function useModal() {
-    const [isOpen, setOpen] = useState(false);
+    const [isOpen, setOpen] = useState(false)
 
     function open() {
-        setOpen(true);
+        setOpen(true)
     }
 
     function close() {
-        setOpen(false);
+        setOpen(false)
     }
 
     return [isOpen, open, close];
@@ -53,5 +53,16 @@ export function useDateParser() {
 export function useTimeParserFromDate() {
     return date => {
         return new Date(date).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
+    }
+}
+
+export function useFileReader() {
+    return file => {
+        return new Promise((resolve, reject) => {
+            let reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result)
+            reader.onerror = reject
+            reader.readAsDataURL(file);
+        })
     }
 }

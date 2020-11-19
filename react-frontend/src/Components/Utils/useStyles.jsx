@@ -1,7 +1,7 @@
-import {makeStyles} from "@material-ui/core/styles";
+import {makeStyles} from "@material-ui/core/styles"
 
 export default function useStyles() {
-    return makeStyles((theme) => ({
+    return makeStyles(theme => ({
         main: {
             backgroundColor: "#fff",
             alignItems: "stretch",
@@ -111,9 +111,24 @@ export default function useStyles() {
             margin: 0,
             padding: 5,
             borderRadius: 0,
-            '&:hover': {
-                backgroundColor: "#00000055",
+            "&:hover": {
+                backgroundColor: "#00000055"
             }
+        },
+        evaluationSections: {
+            border: "2px solid black",
+            marginBottom: "3em"
+        },
+        evaluationCriterias: {
+            fontWeight: "bold"
+        },
+        signature: {
+            maxHeight: 256,
+            maxWidth: 256
+        },
+        dividers: {
+            margin: theme.spacing(1, 0)
         }
+
     }))();
 };

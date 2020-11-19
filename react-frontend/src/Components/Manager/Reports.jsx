@@ -6,8 +6,11 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListSubheader from "@material-ui/core/ListSubheader";
+import * as locales from '@material-ui/core/locale';
+import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import TableCell from "@material-ui/core/TableCell";
 import Typography from "@material-ui/core/Typography";
+import ThemeProvider from "@material-ui/styles/ThemeProvider";
 import PropTypes from 'prop-types';
 import React, {useEffect, useMemo, useState} from 'react';
 import {useApi, useDateParser} from "../Utils/Hooks";
@@ -67,7 +70,6 @@ function DataTableHeader({report}) {
             <TableCell>Ferme le</TableCell>
             <TableCell>Début</TableCell>
             <TableCell>Fin</TableCell>
-            <TableCell>Fichier PDF</TableCell>
         </TableRow>
     }
     if (reportEndpoints[report].includes("contracts")) {
@@ -75,7 +77,6 @@ function DataTableHeader({report}) {
             <TableCell>Étudiant</TableCell>
             <TableCell>Entreprise</TableCell>
             <TableCell>Gestionnaire</TableCell>
-            <TableCell>Fichier PDF</TableCell>
         </TableRow>
     }
     return header
@@ -112,7 +113,6 @@ function DataTableBody({report, rows}) {
                 <TableCell>{parseDate(offer.details.limitDateToApply)}</TableCell>
                 <TableCell>{parseDate(offer.details.internshipStartDate)}</TableCell>
                 <TableCell>{parseDate(offer.details.internshipEndDate)}</TableCell>
-                <TableCell>Show file</TableCell>
             </TableRow>
         )
     }
@@ -125,8 +125,7 @@ function DataTableBody({report, rows}) {
                     contract.studentApplication.student.studentId + ")"
                 }</TableCell>
                 <TableCell>{contract.studentApplication.offer.employer.companyName}</TableCell>
-                <TableCell>{contract.adminName}</TableCell>
-                <TableCell>Show file</TableCell>
+                <TableCell>{contract.admin.name}</TableCell>
             </TableRow>
         )
     }
@@ -140,7 +139,7 @@ DataTableBody.propTypes = {
 
 function DataTable({report}) {
     const api = useApi()
-    const [itemCount, setItemCount] = useState(-1)
+    const [itemCount, setItemCount] = useState(0)
     const [currentPage, setCurrentPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(10)
     const [rows, setRows] = useState([])
@@ -156,28 +155,30 @@ function DataTable({report}) {
             })
     }, [currentPage, rowsPerPage, report]) // eslint-disable-line react-hooks/exhaustive-deps
 
-    return <TableContainer>
-        <Table>
-            <TableHead>
-                <DataTableHeader report={report}/>
-            </TableHead>
-            <TableBody>
-                {bodyMemo}
-            </TableBody>
-            <TableFooter>
-                <tr>
-                    <TablePagination
-                        component="td"
-                        count={itemCount}
-                        page={currentPage}
-                        onChangePage={(e, page) => setCurrentPage(page)}
-                        rowsPerPage={rowsPerPage}
-                        onChangeRowsPerPage={({target: {value}}) => setRowsPerPage(parseInt(value))}
-                    />
-                </tr>
-            </TableFooter>
-        </Table>
-    </TableContainer>
+    return <ThemeProvider theme={createMuiTheme(locales['frFR'])}>
+        <TableContainer>
+            <Table>
+                <TableHead>
+                    <DataTableHeader report={report}/>
+                </TableHead>
+                <TableBody>
+                    {bodyMemo}
+                </TableBody>
+                <TableFooter>
+                    <tr>
+                        <TablePagination
+                            component="td"
+                            count={itemCount}
+                            page={currentPage}
+                            onChangePage={(e, page) => setCurrentPage(page)}
+                            rowsPerPage={rowsPerPage}
+                            onChangeRowsPerPage={({target: {value}}) => setRowsPerPage(parseInt(value))}
+                        />
+                    </tr>
+                </TableFooter>
+            </Table>
+        </TableContainer>
+    </ThemeProvider>
 }
 
 DataTable.propTypes = {
@@ -190,8 +191,8 @@ export default function Reports() {
     const [report, setReport] = useState(0)
 
     return <div className={classes.main} style={{overflowY: "auto"}}>
-        <Typography variant={"h5"}>
-            Rapport:&ensp;
+        <Typography variant={"h5"} display={"block"} style={{marginTop: 10}}>
+            &ensp;Rapport:&ensp;
             <Button onClick={() => setDrawerOpen(true)}>
                 <Typography variant={"button"}>
                     <i className="fa fa-bars"/>&ensp;{reports[report]}
